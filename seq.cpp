@@ -13,19 +13,10 @@ int main(int argc, char const *argv[])
 	is >> n;
 
 	vector<int> p(n);
-	cout<<"Error 0"<<endl;
-	// float u[n][n];
 	float *u = (float *)malloc(n*n*sizeof(float));
-	cout<<"Error 1"<<endl;
-	// float l[n][n];
 	float *l = (float *)malloc(n*n*sizeof(float));
-	cout<<"Error 2"<<endl;
-	// float a[n][n];
 	float *a = (float *)malloc(n*n*sizeof(float));
-	cout<<"Error 3"<<endl;
-	// float a2[n][n];
 	float *a2 = (float *)malloc(n*n*sizeof(float));
-	cout<<"Error 4"<<endl;
 
     float temp;
 	for (int i=0; i<n; i++){
@@ -98,10 +89,9 @@ int main(int argc, char const *argv[])
 		a[i*n+(p[i])] = 1;
 	}
 
-	cout<<"ERROR CHECK"<<endl;
 	// float PA[n][n];
 	float *PA = (float *)malloc(n*n*sizeof(float));
-	cout<<"ERROR PA"<<endl;
+// 	cout<<"ERROR PA"<<endl;
 	for (int i=0; i<n; i++){
 		for (int j=0; j<n; j++){
 			float sum = 0.0;
