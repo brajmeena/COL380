@@ -5,36 +5,42 @@
 #include <cmath>
 
 using namespace std;
+void LU_Decomp(int);
 
 int main(int argc, char const *argv[])
 {
-	ifstream is("data.txt");
 	int n;
-	is >> n;
+	cout<<"Enter n:";
+	cin>>n; 
+	LU_Decomp(n);
+	return 0;
+}
 
+
+void LU_Decomp(int n){	
 	vector<int> p(n);
-	float *u = (float *)malloc(n*n*sizeof(float));
-	float *l = (float *)malloc(n*n*sizeof(float));
-	float *a = (float *)malloc(n*n*sizeof(float));
-	float *a2 = (float *)malloc(n*n*sizeof(float));
-
-    float temp;
+	double *u = (double *)malloc(n*n*sizeof(double));
+	double *l = (double *)malloc(n*n*sizeof(double));
+	double *a = (double *)malloc(n*n*sizeof(double));
+	double *a2 = (double *)malloc(n*n*sizeof(double));
+	double *zero = (double *)malloc(n*n*sizeof(double));  //to make p[n][n]
+	
+    double temp, rand=1000;
 	for (int i=0; i<n; i++){
 		p[i] = i;
 		for (int j=0; j<n; j++){
-			is >> temp;
+			temp = (drand48() * rand);
 			a[i*n+j] = temp;
 			a2[i*n+j] = temp;
 			u[i*n+j] = 0;
-			// zero[i][j] = 0;
+			zero[i*n+j] = 0;
 			if (i==j)	l[i*n+j] = 1;
 			else	l[i*n+j] = 0;
 		}
 	}
 
-
 	for (int k=0; k<n ; k++){
-		float max = 0.0;
+		double max = 0.0;
 		int k2 = k;
 		for (int i=k; i<n; i++){
 			if (max<abs(a[i*n+k])){
@@ -48,7 +54,7 @@ int main(int argc, char const *argv[])
 		}
 		
 		// #### SWAP P[k] and P[K']
-		float temp = p[k];
+		double temp = p[k];
 		p[k] = p[k2];
 		p[k2] = temp; 
 		
@@ -81,58 +87,41 @@ int main(int argc, char const *argv[])
 	}
 
 	for (int i=0; i<n; i++){
-		for (int j=0; j<n; j++){
-			a[i*n+j]=0;
-		}
-	}
-	for (int i=0; i<n; i++){
-		a[i*n+(p[i])] = 1;
+		zero[i*n+(p[i])] = 1;   // zero = P[n][n]
 	}
 
-	// float PA[n][n];
-	float *PA = (float *)malloc(n*n*sizeof(float));
-// 	cout<<"ERROR PA"<<endl;
+	// double PA[n][n];
+	double *PA = (double *)malloc(n*n*sizeof(double));
 	for (int i=0; i<n; i++){
 		for (int j=0; j<n; j++){
-			float sum = 0.0;
+			double sum1=0.0, sum2=0.0;
 			for (int k=0; k<n; k++)
 			{
-				sum = sum + (a[i*n+k] * a2[k*n+j]);
+				sum1 = sum1 + (zero[i*n+k] * a2[k*n+j]);
+				sum2 = sum2 + (l[i*n+k] * u[k*n+j]);
 			}
-			// PA[i][j] = sum;
-			PA[i*n + j] = sum;
+			PA[i*n + j] = sum1;
+			a[i*n+j] = sum2;    // a = LU
 		}
 	}
 
-	// float LU[n][n]; ==== a[i][j]
+	// double diff[n][n]; == a2[i][j]
 	for (int i=0; i<n; i++){
 		for (int j=0; j<n; j++){
-			float sum = 0.0;
-			for (int k=0; k<n; k++)
-			{
-				sum = sum + (l[i*n+k] * u[k*n+j]);
-			}
-			a[i*n+j] = sum;
+			a2[i*n+j] = (PA[i*n + j] - a[i*n+j]);   //a2=PA-LU
 		}
 	}
 
-
-	// float diff[n][n]; == a2[i][j]
-	for (int i=0; i<n; i++){
-		for (int j=0; j<n; j++){
-			a2[i*n+j] = (PA[i*n + j] - a[i*n+j]);
-		}
-	}
-
-	float ans;
+	double ans=0.0;
 	for (int j=0; j<n; j++){
-		float col = 0;
+		double col = 0;
 		for (int i=0; i<n; i++){
 			col = col + (a2[i*n+j]*a2[i*n+j]);
 		}
 		ans = ans + sqrt(col);
 	}
 
-	cout<<" ::ANS = "<<ans<<endl; 
-	return 0;
+	cout<<" ::ANS = "<<ans<<endl;
+
 }
+
